@@ -20,7 +20,8 @@ newLinkForm.addEventListener('submit', (e) => {
     .then(parseResponse)
     .then(findTitle)
     .then(title => storeLink(title, url))
-    .then(clearForm);
+    .then(clearForm)
+    .then(renderLinks);
 });
 
 function clearForm() {
@@ -40,5 +41,18 @@ function storeLink(title, url) {
 }
 
 function getLinks() {
-  
+  return Object.keys(localStorage)
+               .map(key => JSON.parse(localStorage.getItem(key)));
+}
+
+function convertToElement(link) {
+  return `<div class="link">
+            <h3>${link.url}</h3>
+            <p><a href="${link.url}">${link.url}</a></p>
+          </div>`
+}
+
+function renderLinks() {
+  const linkElements = getLinks().map(convertToElement).join('');
+  linksSection.innerHTML = linkElements;
 }
