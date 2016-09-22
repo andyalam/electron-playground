@@ -24,8 +24,14 @@ newLinkForm.addEventListener('submit', (e) => {
     .then(renderLinks);
 });
 
+clearStoragebutton.addEventListener('click', function clearStorage() {
+  localStorage.clear();
+  linksSection.innerHTML = '';
+})
+
 function clearForm() {
   newLinkUrl.value = null;
+  newLinkSubmit.disabled = true;
 }
 
 function parseResponse(text) {
@@ -47,7 +53,7 @@ function getLinks() {
 
 function convertToElement(link) {
   return `<div class="link">
-            <h3>${link.url}</h3>
+            <h3>${link.title}</h3>
             <p><a href="${link.url}">${link.url}</a></p>
           </div>`
 }
@@ -56,3 +62,6 @@ function renderLinks() {
   const linkElements = getLinks().map(convertToElement).join('');
   linksSection.innerHTML = linkElements;
 }
+
+// render from localStorage when the window initially opens
+renderLinks();
