@@ -7,7 +7,7 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({ width: 1000, height: 600 });
   mainWindow.webContents.loadURL(`file://${__dirname}/index.html`);
 
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -19,18 +19,19 @@ const showOpenFileDialog = () => {
   const files = dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
     filters: [
-      {name: 'Text File', extensions: ['txt'] },
-      {name: 'Markdown', extensions: ['md'] }
+      {name: 'Markdown', extensions: ['md', 'markdown'] },
+      {name: 'Text File', extensions: ['txt'] }
     ]
   });
 
-  if (!files) { return; }
+  if (files) { openFile(files[0]); }
+};
 
-  const file = files[0];
+const openFile = (file) => {
   const content = fs.readFileSync(file).toString();
 
-  console.log(content);
-};
+  mainWindow.webContents.send('file-opened', file, content);
+}
 
 
 exports.showOpenFileDialog = showOpenFileDialog;

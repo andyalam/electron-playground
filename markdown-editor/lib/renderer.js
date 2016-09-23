@@ -1,4 +1,4 @@
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const mainProcess = remote.require('./main.js');
 const { showOpenFileDialog } = mainProcess;
 
@@ -8,19 +8,22 @@ const marked = require('marked');
 const $markdownView = $('.raw-markdown');
 const $htmlView = $('.rendered-html');
 
-
+function renderMarkdownToHtml(markdown) {
+  const html = marked(markdown, { sanitize: true });
+  $htmlView.html(html);
+}
 
 $markdownView.on('keyup', function() {
-  var content = $(this).val();
+  const content = $(this).val();
   renderMarkdownToHtml(content);
 });
 
-$('#open-file').on('click', function() {
+$('#open-file').on('click', () => {
   showOpenFileDialog();
-})
+});
 
-
-function renderMarkdownToHtml(markdown) {
-  var html = marked(markdown, { sanitize: true });
-  $htmlView.html(html);
-}
+ipcRenderer.on('file-opened', (event, file, content) => {
+  console.log('rendering');
+  $markdownView.text(content);
+  renderMarkdownToHtml(content);
+});
