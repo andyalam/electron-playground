@@ -9,6 +9,10 @@ class ActiveFile {
         this.open(file);
     }
 
+    get isEdited() {
+        return this.content !== this.originalContent;
+    }
+
     open(file) {
         let content = '';
         if (file) {
@@ -17,6 +21,13 @@ class ActiveFile {
         
         this.file = file;
         this.content = content;
+        this.originalContent = content;
+        this.browserWindow.webContents.send('update-content', this);
+        this.updateWindowTitle();
+    }
+
+    updateContent(content) {
+        this.content = content;
         this.browserWindow.webContents.send('update-content', this);
         this.updateWindowTitle();
     }
@@ -24,7 +35,14 @@ class ActiveFile {
     updateWindowTitle() {
         let title = 'Markdown Editor';
 
-        if (this.file) { title = `${this.file} - ${title}`; }
+        if (this.file) { 
+            title = `${this.file} - ${title}`; 
+            this.browserWindow.setRepresentedFilename(this.file);
+        }
+
+        if (this.isEdited) {
+            title = `${title} (Edited)`;
+        }
 
         this.browserWindow.setTitle(title);
     }
