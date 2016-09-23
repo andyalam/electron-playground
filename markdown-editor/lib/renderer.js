@@ -22,8 +22,7 @@ $('#open-file').on('click', () => {
   showOpenFileDialog();
 });
 
-ipcRenderer.on('file-opened', (event, file, content) => {
-  console.log('rendering');
-  $markdownView.text(content);
-  renderMarkdownToHtml(content);
+ipcRenderer.on('update-content', (event, file) => {
+  $markdownView.text(file.content);
+  renderMarkdownToHtml(file.content);
 });

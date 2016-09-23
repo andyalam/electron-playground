@@ -1,13 +1,18 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const fs = require('fs');
 
-var mainWindow = null;
+const ActiveFile = require('./active-file.js');
+
+let mainWindow = null;
+let activeFile = null;
 
 app.on('ready', () => {
-  mainWindow = new BrowserWindow({ width: 1000, height: 600 });
+  mainWindow = new BrowserWindow({ width: 1200, height: 600 });
+  activeFile = new ActiveFile(mainWindow);
+
   mainWindow.webContents.loadURL(`file://${__dirname}/index.html`);
 
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -24,14 +29,12 @@ const showOpenFileDialog = () => {
     ]
   });
 
-  if (files) { openFile(files[0]); }
+  if (files) { activeFile.open(files[0]); }
 };
 
-const openFile = (file) => {
-  const content = fs.readFileSync(file).toString();
-
-  mainWindow.webContents.send('file-opened', file, content);
-}
 
 
-exports.showOpenFileDialog = showOpenFileDialog;
+module.exports = {
+  showOpenFileDialog,
+  get activeFile() { return activeFile; }
+};
