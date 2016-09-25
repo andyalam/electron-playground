@@ -22,6 +22,8 @@ class ActiveFile {
         this.file = file;
         this.content = content;
         this.originalContent = content;
+
+        app.addRecentDocument(this.file);
         this.browserWindow.webContents.send('update-content', this);
         this.updateWindowTitle();
     }
@@ -45,6 +47,20 @@ class ActiveFile {
         }
 
         this.browserWindow.setTitle(title);
+    }
+
+    saveHtml() {
+        const html = marked(this.content, { sanitize: true });
+
+        const file = dialog.showSaveDialog(this.browserWindow, {
+            title: 'Save HTML',
+            defaultPath: app.getPath('documents'),
+            filters: [
+                { name: 'HTML Files', extensions: ['html'] }
+            ]
+        });
+
+        fs.writeFileSync(file, html);
     }
 }
 

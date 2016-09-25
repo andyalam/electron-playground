@@ -22,7 +22,11 @@ $('#open-file').on('click', () => {
   showOpenFileDialog();
 });
 
+$('#save-html').on('click', () => {
+  mainProcess.activeFile.saveHtml();
+});
+
 ipcRenderer.on('update-content', (event, file) => {
-  $markdownView.text(file.content);
+  $markdownView.val(file.content);
   renderMarkdownToHtml(file.content);
 });

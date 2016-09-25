@@ -10,13 +10,18 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({ width: 1200, height: 600 });
   activeFile = new ActiveFile(mainWindow);
 
-  mainWindow.webContents.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', function() {
     mainWindow = null;
   });
+
+  app.on('open-file', (event, file) => {
+    activeFile.open(file);
+  });
+
 });
 
 
@@ -32,6 +37,10 @@ const showOpenFileDialog = () => {
   if (files) { activeFile.open(files[0]); }
 };
 
+const updateEditedState = (content) => {
+  activeFile.isEdited = compareContents(content);
+  mainWindow.setDocumentEdited(activeFile.isEdited);
+}
 
 
 module.exports = {
