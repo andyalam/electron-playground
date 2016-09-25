@@ -15,6 +15,7 @@ function renderMarkdownToHtml(markdown) {
 
 $markdownView.on('keyup', function() {
   const content = $(this).val();
+  mainProcess.activeFile.updateContent(content);
   renderMarkdownToHtml(content);
 });
 
@@ -22,9 +23,14 @@ $('#open-file').on('click', () => {
   showOpenFileDialog();
 });
 
+$('#save-file').on('click', () => {
+  mainProcess.activeFile.saveMarkdown();
+})
+
 $('#save-html').on('click', () => {
   mainProcess.activeFile.saveHtml();
 });
+
 
 ipcRenderer.on('update-content', (event, file) => {
   $markdownView.val(file.content);

@@ -62,6 +62,24 @@ class ActiveFile {
 
         fs.writeFileSync(file, html);
     }
+
+    saveMarkdown() {
+        if (!this.file) {
+            this.file = dialog.showSaveDialog(this.browserWindow, {
+                title: 'Save Markdown',
+                defaultPath: app.getPath('documents'),
+                filters: [
+                    { name: 'Markdown Files', extensions: ['md', 'markdown']}
+                ]
+            });
+        }
+
+        fs.writeFileSync(this.file, this.content);
+
+        this.originalContent = this.content;
+        this.updateWindowTitle();
+    }
+
 }
 
 module.exports = ActiveFile;
